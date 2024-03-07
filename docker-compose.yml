@@ -1,0 +1,41 @@
+version: '3'
+
+services:
+
+  nginx:
+    container_name: vlantana-api-nginx
+    build:
+      context: .
+      dockerfile: docker/nginx/Dockerfile
+    ports:
+      - '18080:80'
+    volumes:
+      - ./src:/app/
+    links:
+      - php
+
+  php:
+    container_name: vlantana-api-php
+    build:
+      context: .
+      dockerfile: docker/php/Dockerfile
+    environment:
+      PHP_IDE_CONFIG: serverName=localhost
+    volumes:
+      - ./src:/app/
+
+  db:
+    container_name: vlantana-api-db
+    restart: always
+    environment:
+      MYSQL_DATABASE: 'vehicle-fleet'
+      MYSQL_USER: 'vlantana'
+      MYSQL_PASSWORD: 7dfS1yeGqiDQSbTCDM1L
+      MYSQL_ROOT_PASSWORD: zkIjqnCwoZaaoh8YEwRG
+    ports:
+      - '13306:3306'
+    build:
+      context: .
+      dockerfile: docker/db/Dockerfile
+    volumes:
+      - ./docker/db/data:/var/lib/mysql
